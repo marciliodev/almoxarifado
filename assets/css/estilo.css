@@ -1,0 +1,246 @@
+header.RME{
+    width: 785px;
+    color: #444;
+    font-family: Helvetica;
+    padding: -58px;
+    margin: 5px;
+}
+
+fieldset.RME{
+    height: 1600px;
+    padding-top: 52px;
+    padding-bottom: 100px;
+    margin-left: -53px;
+    margin-right: -53px;
+}
+
+table.RME{
+
+
+}
+
+fieldset.RE{
+    width: 900px;
+    margin: 15px auto;
+    color: #444;
+    font-family: Helvetica;
+    padding: 15px;
+}
+
+fieldset.RMSV{
+    width: 900px;
+    margin: 15px auto;
+    color: #444;
+    font-family: Helvetica;
+    padding: 15px;
+}
+
+/* Classe coloca a cor de fundo para zebrar as linhas */
+.zebra{
+    background: lightgray;
+    margin: 2px;
+}
+
+/* Classe coloca a cor de fundo para zebrar as linhas */
+.logo{
+    width: 100%;
+    height: 7%;
+}
+
+h1{
+    text-align: center;
+    font-size: 11px;
+}
+
+h1.entrada{
+    text-align: center;
+    font-size: 15px;
+}
+
+h2.entrada{
+    text-align: left;
+    font-size: 13px;
+}
+
+h2{
+    text-align: center;
+    font-size: 11px;
+}
+
+div{
+    border: 1px solid;
+}
+
+p.sub-titulo{
+    font-size: 20px;
+}
+
+div.entrada{
+    background: silver;
+    height: 20px;
+}
+
+.right{
+    text-align: right;
+}
+
+.center{
+    text-align: center;
+}
+
+.left{
+    text-align: left;
+}
+
+/* Classe para o estilo do cabeçalho da Tabela */
+.   header{
+    background: silver;
+    padding: -1%;
+}
+
+/* Classe para o estilo do cabeçalho da Tabela */
+.fieldset_tr{
+    background: #ddccff;
+    font-size: 10px;
+}
+
+
+.fieldset_th_itens {
+    width: 5%;
+    font-size: 10px;
+}
+
+.fieldset_th_discriminacao {
+    width: 40%;
+    font-size: 10px;
+}
+
+.fieldset_th_qt_alm {
+    width: 10%;
+    font-size: 10px;
+}
+
+.fieldset_th_qt_est {
+    width: 10%;
+    font-size: 10px;
+}
+
+.fieldset_th_qt_uni {
+    width: 10%;
+    font-size: 10px;
+}
+
+.fieldset_th_vl_uni {
+    width: 10%;
+    font-size: 10px;
+}
+
+.fieldset_th_vl_total {
+    width: 10%;
+    font-size: 10px;
+}
+
+.fieldset_td_total {
+    font-size: 12px;
+}
+
+/* Classe para o estilo do cabeçalho da Tabela */
+.cabecalho_RME{
+    padding: -1%;
+    border: 0px;
+    font-size: 12px;
+}
+
+/* Classe para o estilo do cabeçalho da Tabela de R_E */
+tr.header_desc{
+    background: silver;
+    font-size: 12px;
+}
+
+/* Classe para o estilo do cabeçalho de Fornecedor*/
+div.header_1 {
+    background: silver;
+    font-size: 12px;
+    height: 10px;
+}
+
+
+/* Quebra dos cabeçalhos das colunas da tabela de itens*/
+#quebra {
+    width: 14%;
+}
+
+/* Quebra dos cabeçalhos das colunas da tabela de itens*/
+#quebra_qtd_alm_RME {
+    width: 18%;
+}
+
+/* Quebra dos cabeçalhos das colunas da tabela de itens*/
+#quebra_qtd_atual_RME {
+    width: 10%;
+}
+
+/* Quebra dos cabeçalhos das colunas da tabela de itens*/
+#total {
+    width: 300%;
+}
+
+/* h1 do pdf de material de serviço vascular */
+#h1_R_S_V {
+    font-size: 18px;
+}
+
+/* h1 do pdf de material de serviço vascular */
+#h1_RMA {
+    font-size: 18px;
+}
+
+/* th do pdf de material de serviço vascular */
+#th_desc_RSV {
+    width: 50%;
+}
+
+/* th do pdf de cod de R_E */
+#th_cod_RE {
+    width: 8%;
+}
+
+/* th do pdf de entrada */
+#th_desc_RE {
+    width: 40%;
+}
+
+/* th do pdf de material de serviço vascular */
+#th_desc_RMA {
+    width: 50%;
+}
+
+/* th do pdf de vl_custo de R_E*/
+#th_vl_custo_RE {
+    width: 10%;
+}
+
+/* th do pdf de vl_total de R_E*/
+#th_vl_total_RE {
+    width: 10%;
+}
+
+/* th do pdf de qtd de R_E*/
+#th_qtd_RE {
+    width: 8%;
+}
+
+/* th do pdf de und R_E*/
+#th_und_RE {
+    width: 8%;
+}
+
+/* th do pdf de lote R_E*/
+#th_lote_RE {
+    width: 5%;
+}
+
+/* th do pdf de validade R_E*/
+#th_validade_RE {
+    width: 15%;
+}
