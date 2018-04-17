@@ -1,6 +1,5 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-//require_once __DIR__ . '/vendor/autoload.php';
 
 class PDF_c extends CI_Controller
 {
@@ -50,13 +49,14 @@ class PDF_c extends CI_Controller
         //$dados['data_cadastro'] = $data;
         $html = [];
         $html[0] = $this->load->view('pdf/html_material_escritorio', '', TRUE);
-        $footer = 'Página';
+        $footer = $this->load->view('pdf/footer_material_escritorio', '', TRUE);
         $header = $this->load->view('pdf/header_material_escritorio', '', TRUE);
 
         return $this->html_to_pdf($html, $footer, $header);
     }
 
-    public function html_to_pdf($html, $footer, $header, $destino = 'F', $titulo = '') {
+    public function html_to_pdf($html, $footer, $header, $destino = 'F', $titulo = '')
+    {
 //        $cont = $this->contador_pag + 1;
         $this->load->library("mpdf");
         $pdf = $this->mpdf->load(['tempDir' => '/tmp', 'setAutoTopMargin' => 'stretch', 'setAutoBottomMargin' => 'stretch', 'autoMarginPadding' => 5, 'default_font' => 'arial']);
@@ -70,8 +70,8 @@ class PDF_c extends CI_Controller
                     5, // margin right
                     0, // margin top
                     0, // margin bottom
-                    10, // margin header
-                    10  // margin footer
+                    5, // margin header
+                    5  // margin footer
                 );
                 $pdf->WriteHTML($page);
             }
@@ -80,13 +80,18 @@ class PDF_c extends CI_Controller
                 $pdf->SetHTMLHeader($header);
                 $pdf->AddPage('P');
 //                $pdf->AddPage('P', '', "$this->contador_pag");
-                $pdf->SetHTMLFooter($footer);
+                $pdf->SetHTMLFooter($footer.'
+                <b>Página {PAGENO}</b>
+                ');
                 $pdf->WriteHTML($page);
 //                $this->contador_pag += $pdf->page;
             }
         }
         $pdf->setTitle($titulo);
+        $pdf->Output();
 
+        //Implementar depois
+        /*
         if ($destino == 'F') {
             $filename = FCPATH . "uploads/" . uniqid() . ".pdf";
             $pdf->Output("$filename", $destino);
@@ -95,11 +100,11 @@ class PDF_c extends CI_Controller
             $filename = $titulo . ".pdf";
             $pdf->Output("$filename", $destino);
         }
+        */
     }
 
     public function index()
     {
-     $this->gerar_pag_pdf();
+        $this->gerar_pag_pdf();
     }
-
 }

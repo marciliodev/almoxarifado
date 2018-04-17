@@ -44,7 +44,7 @@ fieldset.RMSV{
 /* Classe coloca a cor de fundo para zebrar as linhas */
 .logo{
     width: 100%;
-    height: -20%;
+    margin: auto;
 }
 
 h1{
@@ -192,7 +192,7 @@ div.header_1 {
 
 /* h1 do pdf de material de serviço vascular */
 #h1_RMA {
-    font-size: 18px;
+    font-size: 10px;
 }
 
 /* h1 do pdf de material de serviço vascular */
