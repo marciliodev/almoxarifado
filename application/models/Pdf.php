@@ -8,6 +8,8 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+//require_once APPPATH . 'third_party\mpdf60\mpdf.php';
+
 class Pdf extends CI_Model {
 
     public function __construct()

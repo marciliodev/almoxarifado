@@ -1,8 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+//require_once __DIR__ . '/vendor/autoload.php';
 
-class PDF_c extends CI_Controller {
-
+class PDF_c extends CI_Controller
+{
 
     public function __construct()
     {
@@ -10,292 +11,95 @@ class PDF_c extends CI_Controller {
         $this->load->model('pdf');
     }
 
-    //Construção do HTML para o PDF de Material de Escritório
+    //Seta qual será as página correspondentes para usar na construção do pdf
+    public function get_html($value)
+    {
+        switch ($value) {
+            case 1:
+                return $this->load->view('pdf/html_material_escritorio', '', TRUE);
+            case 2:
+                return $this->load->view('pdf/html_material_almoxarifado', '', TRUE);
+            case 3:
+                return $this->load->view('pdf/html_material_almoxarifado', '', TRUE);
+            case 4:
+                return $this->load->view('pdf/html_material_servico_vascular', '', TRUE);
+            default:
+                break;
+        }
+    }
+
+    //Seta qual será as página correspondentes para usar na construção do pdf
+    public function get_header($value)
+    {
+        switch ($value) {
+            case 1:
+                return $this->load->view('pdf/header_material_escritorio', '', TRUE);
+            case 2:
+                return $this->load->view('pdf/header_material_almoxarifado', '', TRUE);
+            case 3:
+                return $this->load->view('pdf/header_material_almoxarifado', '', TRUE);
+            case 4:
+                return $this->load->view('pdf/header_material_servico_vascular', '', TRUE);
+            default:
+                break;
+        }
+    }
+
+    public function gerar_pag_pdf() {
+        //$dados['documento'] = $documento;
+        //$dados['data_cadastro'] = $data;
+        $html = [];
+        $html[0] = $this->load->view('pdf/html_material_escritorio', '', TRUE);
+        $footer = 'Página';
+        $header = $this->load->view('pdf/header_material_escritorio', '', TRUE);
+
+        return $this->html_to_pdf($html, $footer, $header);
+    }
+
+    public function html_to_pdf($html, $footer, $header, $destino = 'F', $titulo = '') {
+//        $cont = $this->contador_pag + 1;
+        $this->load->library("mpdf");
+        $pdf = $this->mpdf->load(['tempDir' => '/tmp', 'setAutoTopMargin' => 'stretch', 'setAutoBottomMargin' => 'stretch', 'autoMarginPadding' => 5, 'default_font' => 'arial']);
+//        print_r($html);return;
+        if ($footer == null) {
+            foreach ($html as $page) {
+                $pdf->SetHTMLHeader($header);
+                $pdf->AddPage('', // L - landscape, P - portrait
+                    '', '', //inicio da contagem do numero de páginas
+                    '', '', 5, // margin left
+                    5, // margin right
+                    0, // margin top
+                    0, // margin bottom
+                    10, // margin header
+                    10  // margin footer
+                );
+                $pdf->WriteHTML($page);
+            }
+        } else {
+            foreach ($html as $page) {
+                $pdf->SetHTMLHeader($header);
+                $pdf->AddPage('P');
+//                $pdf->AddPage('P', '', "$this->contador_pag");
+                $pdf->SetHTMLFooter($footer);
+                $pdf->WriteHTML($page);
+//                $this->contador_pag += $pdf->page;
+            }
+        }
+        $pdf->setTitle($titulo);
+
+        if ($destino == 'F') {
+            $filename = FCPATH . "uploads/" . uniqid() . ".pdf";
+            $pdf->Output("$filename", $destino);
+            return $filename;
+        } else {
+            $filename = $titulo . ".pdf";
+            $pdf->Output("$filename", $destino);
+        }
+    }
+
     public function index()
     {
-        $this->load->view('index');
+     $this->gerar_pag_pdf();
     }
 
-    public function contador()
-    {
-        $cont = 1;
-        $this->itens = $this->itens + $cont;
-        return $this->itens;
-    }
-
-    /*
-
-    //Construção do HTML para o PDF de Material do Almoxarifado
-    public function CorpoHTML_RMA() {
-
-        $data = date('d/m/Y');
-        $color = null;
-        $html .= "
-        <fieldset class='R_M_A'>
-        <img src=\"img\logo2.jpg\">
-        <div class='header'>
-            <h1 id='h1_RMA'>Relação de Materiais do Almoxarifado $data</h1>
-        </div>";
-        $html .= " <table border='1' width='1000' align='center'>
-        <tr class='header'>
-            <th class='center'>Itens</th>
-            <th id='th_desc_RSV' class='center'>Descrição do item</th>
-            <th class='center'>Quantitativo</th>
-            <th class='center'>U.F</th>
-            <th class='center'>Valor Unitário. R$</th>
-            <th class='center'>Valor Total. R$</th>
-        </tr>";
-
-        //Chamada do SQL
-        $sql = "select * from produtos";
-        foreach ($this->pdo->query($sql) as $reg):
-            $html .= ($color) ? "<tr>" : "<tr class=\"zebra\">";
-            $html .= "<td class='center'>";
-            $html .= $this->contItens(); //chama a função que conta os itens
-            $html .= "</td>"; //Itens do relatório
-            $html .= "<td class='left'>{$reg['disc_produto']}</td>"; //descrição do produto
-            $html .= "<td class='center'>{$reg['qt_atual']}</td>"; //quantidade total do estoque
-            $html .= "<td class='center'>{$reg['UF']}</td>"; //quantidade atual do estoque
-            $html .= "<td class='center'>R$ {$reg['vl_unitario']}</td>"; //valor unitário do produto
-            $html .= "<td class='center'>R$ {$reg['vl_total']}</td>"; //valor total do produto
-            $color = !$color;
-
-        endforeach;
-
-        $html .= ";
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        <td class='center'><b>TOTAL</b></td>";
-        //Soma do total do vl_total de cada item da lista
-        $soma = "select sum(vl_total) from produtos";
-        foreach ($this->pdo->query($soma) as $resultado);
-        $html .= "<td class='center'><b>R$ {$resultado[0]}</b></td>
-        </tr>
-        </table>
-        </fieldset>";
-
-        return $html;
-    }
-
-    //Construção do HTML para o PDF de Material de Serviço Vascular
-    public function CorpoHTML_RMSV() {
-
-        $data = date('d/m/Y');
-        $color = null;
-        $html .= "
-        <fieldset class='RMSV'>
-        <img src=\"img\logo2.jpg\">
-        <div class='header'>
-            <h1 id='h1_RSV'>Relação de Materiais do Almoxarifado para Serviço Vascular $data</h1>
-        </div>";
-        $html .= " <table border='1' width='1000' align='center'>
-        <tr class='header'>
-            <th class='center'>Itens</th>
-            <th id='th_desc_SV' class='center'>Descrição do item</th>
-            <th class='center'>Quantitativo</th>
-            <th class='center'>U.F</th>
-            <th class='center'>Valor Unitário. R$</th>
-            <th class='center'>Valor Total. R$</th>
-        </tr>";
-
-        //Chamada do SQL
-        $sql = "select * from produtos";
-        foreach ($this->pdo->query($sql) as $reg):
-            $html .= ($color) ? "<tr>" : "<tr class=\"zebra\">";
-            $html .= "<td class='center'>";
-            $html .= $this->contItens(); //chama a função que conta os itens
-            $html .= "</td>"; //Itens do relatório
-            $html .= "<td class='left'>{$reg['disc_produto']}</td>"; //descrição do produto
-            $html .= "<td class='center'>{$reg['qt_atual']}</td>"; //quantidade total do estoque
-            $html .= "<td class='center'>{$reg['UF']}</td>"; //quantidade atual do estoque
-            $html .= "<td class='center'>R$ {$reg['vl_unitario']}</td>"; //valor unitário do produto
-            $html .= "<td class='center'>R$ {$reg['vl_total']}</td>"; //valor total do produto
-            $color = !$color;
-        endforeach;
-
-        $html .= ";
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        <td class='center'><b>TOTAL</b></td>";
-        //Soma do total do vl_total de cada item da lista
-        $soma = "select sum(vl_total) from produtos";
-        foreach ($this->pdo->query($soma) as $resultado);
-        $html .= "<td class='center'><b>R$ {$resultado[0]}</b></td>
-        </tr>
-        </table>
-        </fieldset>";
-
-        return $html;
-    }
-
-    //Construção do HTML para o PDF de Entrada
-    public function CorpoHTML_RE() {
-
-        $data = date('d/m/Y');
-        $color = null;
-
-        $html .= "
-        <fieldset class='RME'>
-        <img src=\"img\logo1.jpg\">
-        <div class='entrada'>
-            <h1 class='entrada'>Relatório de Entrada</h1>
-            <h2 class='entrada'><b>&nbsp;Fornecedor:</b> NOME DO FORNECEDOR - <br>
-            &nbsp;<b>Nº Documento:</b> 000001/2018<br>
-            <b>&nbsp;Data:</b> $data</h2>
-        </div>";
-        $html .= " <table border='1' width='1000' align='center'>
-        <tr class='header_desc'>
-            <th id='th_cod_RE' class='center'>Código</th>
-            <th id='th_desc_RE' class='center'>Descrição</th>
-            <th id='th_qtd_RE' class='center'>Qtd</th>
-            <th id='th_und_RE' class='center'>Und.</th>
-            <th id='th_vl_custo_RE' class='center'>Valor de Custo R$</th>
-            <th id='th_vl_total_RE' class='center'>Valor Total R$</th> 
-            <th id='th_lote_RE' class='center'>Lote</th> 
-            <th id='th_validade_RE' class='center'>Validade</th> 
-        </tr>";
-
-        //Chamada do SQL
-        $sql = "select * from produtos";
-        foreach ($this->pdo->query($sql) as $reg):
-            $html .= ($color) ? "<tr>" : "<tr class=\"zebra\">";
-            $html .= "<td class='center'>";
-            $html .= $this->contItens(); //chama a função que conta os itens
-            $html .= "</td>"; //Itens do relatório
-            $html .= "<td class='left'>{$reg['disc_produto']}</td>"; //descrição do produto
-            $html .= "<td class='center'>{$reg['qt_total']}</td>"; //quantidade total do estoque
-            $html .= "<td class='center'>{$reg['qt_atual']}</td>"; //quantidade atual do estoque
-            $html .= "<td class='left'>{$reg['vl_unitario']}</td>"; //valor unitário do produto
-            $html .= "<td class='left'>{$reg['vl_total']}</td>"; //valor total do produto
-            $html .= "<td class='center'></td>"; //valor do lote
-            $html .= "<td class='left'>-</td>"; //valor da validade
-            $color = !$color;
-        endforeach;
-
-        $html .= ";
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        <td class='left'><b>TOTAL</b></td>";
-        //Soma do total do vl_total de cada item da lista
-        $soma = "select sum(vl_total) from produtos";
-        foreach ($this->pdo->query($soma) as $resultado);
-        $html .= "<td class='left'><b>{$resultado[0]}</b></td>
-            <td></td>
-            <td></td>
-        </tr>
-        </table>
-        </fieldset>";
-
-        return $html;
-    }
-
-    */
-
-    // Gerar Relatório de Material de Escritório
-    public function GerarPDF($tipo) {
-
-        $this->$tipo = 0; //tipo que será passado no parâmetro da construção do pdf no index.php
-
-        //Verificar qual relatório será gerado
-        switch ($tipo){
-            case 1: {
-                // Geração do PDF Material de Escritório
-                $this->pdf = new mPDF('utf-8', 'A4');
-                $this->pdf->SetDisplayMode('fullpage');
-                $css = file_get_contents("css/estilo.css");
-                //Parâmetros do Corpo do PDF
-                $this->pdf->WriteHTML($css, 1);
-                $this->pdf->WriteHTML($this->CorpoHTML_RME());
-                //Saída do PDF
-                ob_end_clean(); //limpar objeto antes da geração do PDF
-                $this->pdf->Output();
-                //Trata caracteres especiais sem gerar erro
-                $this->pdf->allow_charset_conversion = true;
-                //$this->pdf->charset_in='iso-8859-1';
-                $this->pdf->charset_in = 'windows-1252';
-                //Geração do arquivo temporário do PDF para não gerar atrasos
-                $this->pdf = new mPDF(['tempDir' => __DIR__ . '/tmp']);
-                exit;
-            }
-            case 2: {
-                // Geração do PDF Material do Almoxarifado
-                $this->pdf = new mPDF('utf-8', 'A4-L'); //A4-L Vertical
-                $css = file_get_contents("css/estilo.css");
-                //Parâmetros do Corpo do PDF
-                $this->pdf->SetDisplayMode('fullpage');
-                $this->pdf->WriteHTML($css, 1);
-                $this->pdf->WriteHTML($this->CorpoHTML_RMA());
-                //Saída do PDF
-                ob_end_clean(); //limpar objeto antes da geração do PDF
-                $this->pdf->Output();
-                //Trata caracteres especiais sem gerar erro
-                $this->pdf->allow_charset_conversion = true;
-                //$this->pdf->charset_in='iso-8859-1';
-                $this->pdf->charset_in = 'windows-1252';
-                //Geração do arquivo temporário do PDF para não gerar atrasos
-                $this->pdf = new mPDF(['tempDir' => __DIR__ . '/tmp']);
-                exit;
-            }
-            case 3: {
-                // Geração do PDF Materila de Serviço Vascular
-                $this->pdf = new mPDF('utf-8', 'A4-L'); //A4-L Vertical
-                $css = file_get_contents("css/estilo.css");
-                //Parâmetros do Corpo do PDF
-                $this->pdf->SetDisplayMode('fullpage');
-                $this->pdf->WriteHTML($css, 1);
-                $this->pdf->WriteHTML($this->CorpoHTML_RMSV());
-                //Saída do PDF
-                ob_end_clean(); //limpar objeto antes da geração do PDF
-                $this->pdf->Output();
-                //Trata caracteres especiais sem gerar erro
-                $this->pdf->allow_charset_conversion = true;
-                //$this->pdf->charset_in='iso-8859-1';
-                $this->pdf->charset_in = 'windows-1252';
-                //Geração do arquivo temporário do PDF para não gerar atrasos
-                $this->pdf = new mPDF(['tempDir' => __DIR__ . '/tmp']);
-                exit;
-            }
-            case 4: {
-                // Geração do PDF Entrada
-                $this->pdf = new mPDF('utf-8', 'A4');
-                $css = file_get_contents("css/estilo.css");
-                //Parâmetros do Corpo do PDF
-                $this->pdf->SetDisplayMode('fullpage');
-                $this->pdf->WriteHTML($css, 1);
-                $this->pdf->WriteHTML($this->CorpoHTML_RE());
-                //Saída do PDF
-                ob_end_clean(); //limpar objeto antes da geração do PDF
-                $this->pdf->Output();
-                //Trata caracteres especiais sem gerar erro
-                //$this->pdf->charset_in='iso-8859-1';
-                $this->pdf->allow_charset_conversion = true;
-                $this->pdf->charset_in = 'windows-1252';
-                //Geração do arquivo temporário do PDF para não gerar atrasos
-                $this->pdf = new mPDF(['tempDir' => __DIR__ . '/tmp']);
-                exit;
-            }
-            default : {
-                exit;
-            }
-
-        }
-
-    }
-
-    /*
-    * Método para exibir o arquivo PDF
-    * @param $name - Nome do arquivo se necessário grava-lo
-    */
-    public function Exibir($name = null) {
-        $this->pdf->Output($name, 'I');
-    }
 }
