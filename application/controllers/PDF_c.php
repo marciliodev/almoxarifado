@@ -44,27 +44,36 @@ class PDF_c extends CI_Controller
         }
     }
 
-    public function gerar_pag_pdf() {
-        //$dados['documento'] = $documento;
+    public function contItens()
+    {
+        $cont = 1;
+        $this->itens = $this->itens + $cont;
+        return $this->itens;
+    }
+
+    public function gerar_pag_pdf()
+    {
+        $dados['produtos'] = $this->pdf->busca_produtos();
+        //$dados['contador'] = $this->contItens();
         //$dados['data_cadastro'] = $data;
         $html = [];
-        $html[0] = $this->load->view('pdf/html_material_escritorio', '', TRUE);
+        $html[0] = $this->load->view('pdf/html_material_escritorio', $dados, TRUE);
         $footer = $this->load->view('pdf/footer_material_escritorio', '', TRUE);
         $header = $this->load->view('pdf/header_material_escritorio', '', TRUE);
 
-        return $this->html_to_pdf($html, $footer, $header);
+        return $this->html_to_pdf($html, $footer, $header, 'F', 'Relatório Teste');
     }
 
     public function html_to_pdf($html, $footer, $header, $destino = 'F', $titulo = '')
     {
 //        $cont = $this->contador_pag + 1;
         $this->load->library("mpdf");
-        $pdf = $this->mpdf->load(['tempDir' => '/tmp', 'setAutoTopMargin' => 'stretch', 'setAutoBottomMargin' => 'stretch', 'autoMarginPadding' => 5, 'default_font' => 'arial']);
+        $mypdf = $this->mpdf->load(['tempDir' => '/tmp', 'setAutoTopMargin' => 'stretch', 'setAutoBottomMargin' => 'stretch', 'autoMarginPadding' => 5, 'default_font' => 'arial']);
 //        print_r($html);return;
         if ($footer == null) {
             foreach ($html as $page) {
-                $pdf->SetHTMLHeader($header);
-                $pdf->AddPage('', // L - landscape, P - portrait
+                $mypdf->SetHTMLHeader($header);
+                $mypdf->AddPage('', // L - landscape, P - portrait
                     '', '', //inicio da contagem do numero de páginas
                     '', '', 5, // margin left
                     5, // margin right
@@ -73,22 +82,24 @@ class PDF_c extends CI_Controller
                     5, // margin header
                     5  // margin footer
                 );
-                $pdf->WriteHTML($page);
+                $mypdf->WriteHTML($page);
             }
         } else {
             foreach ($html as $page) {
-                $pdf->SetHTMLHeader($header);
-                $pdf->AddPage('P');
+                $mypdf->SetHTMLHeader($header);
+                $mypdf->AddPage('P');
 //                $pdf->AddPage('P', '', "$this->contador_pag");
-                $pdf->SetHTMLFooter($footer.'
+                $mypdf->SetHTMLFooter($footer . '
                 <b>Página {PAGENO}</b>
                 ');
-                $pdf->WriteHTML($page);
+                $mypdf->WriteHTML($page);
 //                $this->contador_pag += $pdf->page;
             }
         }
-        $pdf->setTitle($titulo);
-        $pdf->Output();
+        $mypdf->setTitle($titulo);
+        ob_end_clean(); //limpar objeto antes da geração do PDF
+        $mypdf->Output();
+
 
         //Implementar depois
         /*
@@ -103,8 +114,15 @@ class PDF_c extends CI_Controller
         */
     }
 
+    public function teste()
+    {
+        $dados['valores'] = $this->pdf->busca_produtos();
+        $this->load->view('teste', $dados, TRUE);
+    }
+
     public function index()
     {
-        $this->gerar_pag_pdf();
+        $this->teste();
+        //$this->gerar_pag_pdf();
     }
 }

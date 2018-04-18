@@ -1,17 +1,9 @@
-header.RME{
-    width: 785px;
+fieldset.RME{
+    width: 800px;
     color: #444;
     font-family: Helvetica;
     padding: -58px;
     margin: 5px;
-}
-
-fieldset.RME{
-    height: 1600px;
-    padding-top: 52px;
-    padding-bottom: 100px;
-    margin-left: -53px;
-    margin-right: -53px;
 }
 
 table.RME{

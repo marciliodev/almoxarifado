@@ -53,6 +53,6 @@ $route['default_controller'] = 'pdf_c';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
-$route['rel'] = 'home_c/index';
+//$route['rel'] = 'home_c/index';
 $route['pdf'] = 'pdf_c/gerar_pag_pdf';
 
