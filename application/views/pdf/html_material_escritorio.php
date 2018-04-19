@@ -10,14 +10,13 @@
             <th class='center'>Valor Unitário. R$</th>
             <th class='center'>Valor Total. R$</th>
         </tr>
-        <?php foreach ($produtos as $produto): ?>
-
-        <td class='center'>1</td>
-        <td class='left'><?= $produto->{'disc_produtos'} ?></td>
-        <td class='center'><?= $produto->{'qt_atual'} ?></td>
-        <td class='center'><?= $produto->{'UF'} ?></td>
-        <td class='center'>R$<?= $produto->{'vl_unitario'}?></td>
-        <td class='center'>R$<?= $produto->{'vl_total'} ?></td>
+        <?php foreach ($produtos as $produto=>$value): ?>
+        <td class="center"><?php foreach ($contador as $itens); ?></td>
+        <td class='left'><?php$produto['disc_produto']?></td>
+        <td class='center'><?php$produto['qt_total']?></td>
+        <td class='center'><?php$produto['UF']?></td>
+        <td class='center'>R$ <?php$produto['vl_unitario']?></td>
+        <td class='center'>R$ <?php$produto['vl_total']?></td>
         <?php endforeach; ?>
         <tr>
             <td></td>
@@ -25,8 +24,9 @@
             <td></td>
             <td></td>
             <td class='center'><b>TOTAL</b></td>
-            <?php foreach ($soma as $resultado) ?>
-            <td class='center'><b>R$ //$resultado[0]</b></td>
+            <?php foreach ($soma as $total=>$value): ?>
+            <td class='center'><b>R$ <?php$total[0]?></b></td>
+            <?php endforeach; ?>
         </tr>
     </table>
 </fieldset>

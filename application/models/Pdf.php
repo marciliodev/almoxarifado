@@ -22,15 +22,23 @@ class Pdf extends CI_Model
 
     public function busca_produtos()
     {
-        $query = $this->db->select('*')->from($this->tabela);
-        return $query;
+        $this->db->select('*')->from($this->tabela);
+        $sql = $this->db->get();
+        return $sql->result_array();
+    }
+
+    public function quantidade_itens()
+    {
+        $sql = "
+        select COUNT(qt_total) from produtos;
+        ";
+        return $sql;
     }
 
     public function valores_itens_total()
     {
-        $this->db->select('sum.vl_total.*');
-        $this->db->from($this->tabela);
-        return $this->db->get()->result();
+        $sql = $this->db->select('sum.vl_total')->from($this->tabela);
+        return $sql;
     }
 
     public function valores_itens_unitario()

@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class PDF_c extends CI_Controller
 {
+    private $itens = 0;
 
     public function __construct()
     {
@@ -44,22 +45,31 @@ class PDF_c extends CI_Controller
         }
     }
 
-    public function contItens()
+    public function contador()
     {
-        $cont = 1;
-        $this->itens = $this->itens + $cont;
-        return $this->itens;
+        while($this->itens < $this->quantidadeItens()){
+            $cont = 1;
+            $this->itens = $this->itens + $cont;
+            return $this->itens;
+        }
+    }
+
+    public function quantidadeItens(){
+        $dados = $this->pdf->quantidade_itens();
+        return $dados;
     }
 
     public function gerar_pag_pdf()
     {
-        $dados['produtos'] = $this->pdf->busca_produtos();
+        $dados['produtos'] = array($this->pdf->busca_produtos());
+        $dados['contador'] = array($this->contItens());
+        $dados['soma'] = array($this->pdf->valores_itens_total());
         //$dados['contador'] = $this->contItens();
         //$dados['data_cadastro'] = $data;
         $html = [];
-        $html[0] = $this->load->view('pdf/html_material_escritorio', $dados, TRUE);
-        $footer = $this->load->view('pdf/footer_material_escritorio', '', TRUE);
-        $header = $this->load->view('pdf/header_material_escritorio', '', TRUE);
+        $html[0] = $this->load->view('pdf/html_material_escritorio', $dados);
+        $footer = $this->load->view('pdf/footer_material_escritorio');
+        $header = $this->load->view('pdf/header_material_escritorio');
 
         return $this->html_to_pdf($html, $footer, $header, 'F', 'Relatório Teste');
     }
@@ -114,15 +124,17 @@ class PDF_c extends CI_Controller
         */
     }
 
-    public function teste()
-    {
-        $dados['valores'] = $this->pdf->busca_produtos();
-        $this->load->view('teste', $dados, TRUE);
-    }
-
     public function index()
     {
-        $this->teste();
+        foreach ((array) $this->itens as $cont) {
+            $dados[$cont] = $this->pdf->busca_produtos();
+            $valores['dados'] = $dados;
+            $this->load->view('teste', $valores);
+        }
+        //$this->load->view('teste', $dados);
+        //var_dump($dados);
+        //$this->load->view('teste', $dados);
         //$this->gerar_pag_pdf();
     }
 }
+
