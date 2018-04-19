@@ -9,13 +9,13 @@
         <th class='center'>Valor Unitário. R$</th>
         <th class='center'>Valor Total. R$</th>
     </tr>
-<?php foreach ($dados as $produto): ?>
-<td class='left'><?=$produto?></td>
-<td class='center'><?=$produto?></td>
-<td class='center'><?=$produto?></td>
-<td class='center'>R$ <?=$produto?></td>
-<td class='center'>R$ <?=$produto?></td>
-<?php endforeach; ?>
+    <?php foreach ($dados as $produto): ?>
+ <td class='left'><?=json_encode($produto)?></td>
+ <td class='center'><?=json_encode($produto)?>></td>
+ <td class='center'><?=json_encode($produto)?></td>
+ <td class='center'>R$ <?=json_encode($produto)?></td>
+ <td class='center'>R$ <?=json_encode($produto)?></td>
+    <?php endforeach; ?>
     <tr>
         <td></td>
         <td></td>

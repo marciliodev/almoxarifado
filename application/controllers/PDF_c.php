@@ -45,6 +45,11 @@ class PDF_c extends CI_Controller
         }
     }
 
+    public function quantidadeItens(){
+        $dados = $this->pdf->quantidade_itens();
+        return $dados;
+    }
+
     public function contador()
     {
         while($this->itens < $this->quantidadeItens()){
@@ -52,11 +57,6 @@ class PDF_c extends CI_Controller
             $this->itens = $this->itens + $cont;
             return $this->itens;
         }
-    }
-
-    public function quantidadeItens(){
-        $dados = $this->pdf->quantidade_itens();
-        return $dados;
     }
 
     public function gerar_pag_pdf()
@@ -124,16 +124,19 @@ class PDF_c extends CI_Controller
         */
     }
 
-    public function index()
+    public function teste()
     {
-        foreach ((array) $this->itens as $cont) {
+        foreach ((array)$this->itens as $cont) {
             $dados[$cont] = $this->pdf->busca_produtos();
-            $valores['dados'] = $dados;
+            //var_dump($dados);
+            $valores['dados'] = $dados[$cont];
             $this->load->view('teste', $valores);
         }
-        //$this->load->view('teste', $dados);
-        //var_dump($dados);
-        //$this->load->view('teste', $dados);
+    }
+
+    public function index()
+    {
+        $this->teste();
         //$this->gerar_pag_pdf();
     }
 }

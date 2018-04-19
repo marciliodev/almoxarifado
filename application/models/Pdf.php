@@ -20,11 +20,12 @@ class Pdf extends CI_Model
         $this->tabela = "produtos";
     }
 
+    //busca de produtos - status (ok)
     public function busca_produtos()
     {
         $this->db->select('*')->from($this->tabela);
         $sql = $this->db->get();
-        return $sql->result_array();
+        return $sql->result();
     }
 
     public function quantidade_itens()
