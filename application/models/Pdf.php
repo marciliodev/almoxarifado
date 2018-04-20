@@ -28,25 +28,4 @@ class Pdf extends CI_Model
         return $sql->result();
     }
 
-    public function quantidade_itens()
-    {
-        $sql = "
-        select COUNT(qt_total) from produtos;
-        ";
-        return $sql;
-    }
-
-    public function valores_itens_total()
-    {
-        $sql = $this->db->select('sum.vl_total')->from($this->tabela);
-        return $sql;
-    }
-
-    public function valores_itens_unitario()
-    {
-        $this->db->select('sum.vl_unitario.*');
-        $this->db->from($this->tabela);
-        return $this->db->get()->result();
-    }
-
-   }
+}

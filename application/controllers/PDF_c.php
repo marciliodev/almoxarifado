@@ -4,6 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class PDF_c extends CI_Controller
 {
     private $itens = 0;
+    private $color = null;
 
     public function __construct()
     {
@@ -45,6 +46,7 @@ class PDF_c extends CI_Controller
         }
     }
 
+    /*
     public function quantidadeItens(){
         $dados = $this->pdf->quantidade_itens();
         return $dados;
@@ -58,6 +60,7 @@ class PDF_c extends CI_Controller
             return $this->itens;
         }
     }
+    */
 
     public function gerar_pag_pdf()
     {
@@ -127,8 +130,9 @@ class PDF_c extends CI_Controller
     public function teste()
     {
         foreach ((array)$this->itens as $cont) {
+            //Definição das variáveis nas posições do contado, pois, sua chamada é um array de array.
             $dados[$cont] = $this->pdf->busca_produtos();
-            //var_dump($dados);
+            //Definição das variáveis que vão para a view.
             $valores['dados'] = $dados[$cont];
             $this->load->view('teste', $valores);
         }
