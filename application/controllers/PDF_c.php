@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+//include ("view/html_material_escritorio.php");
+
 class PDF_c extends CI_Controller
 {
     private $itens = 0;
@@ -64,27 +66,34 @@ class PDF_c extends CI_Controller
 
     public function gerar_pag_pdf()
     {
-        $dados['produtos'] = array($this->pdf->busca_produtos());
-        $dados['contador'] = array($this->contItens());
-        $dados['soma'] = array($this->pdf->valores_itens_total());
+        foreach ((array)$this->itens as $cont) {
+            //Definição das variáveis nas posições do contado, pois, sua chamada é um array de array.
+            $dados[$cont] = $this->pdf->busca_produtos();
+            //Definição das variáveis que vão para a view.
+            $valores['dados'] = $dados[$cont];
+            //var_dump($valores);
+            $this->load->view('teste', $valores);
+        }
         //$dados['contador'] = $this->contItens();
         //$dados['data_cadastro'] = $data;
         $html = [];
-        $html[0] = $this->load->view('pdf/html_material_escritorio', $dados);
-        $footer = $this->load->view('pdf/footer_material_escritorio');
+        $html[0] = $this->load->view('pdf/html_material_escritorio', $valores);
+        $footer = null;
+        //$footer = $this->load->view('pdf/footer_material_escritorio');
         $header = $this->load->view('pdf/header_material_escritorio');
 
         return $this->html_to_pdf($html, $footer, $header, 'F', 'Relatório Teste');
     }
 
-    public function html_to_pdf($html, $footer, $header, $destino = 'F', $titulo = '')
+    public function html_to_pdf($html, $footer, $header, $titulo = '')
     {
 //        $cont = $this->contador_pag + 1;
         $this->load->library("mpdf");
         $mypdf = $this->mpdf->load(['tempDir' => '/tmp', 'setAutoTopMargin' => 'stretch', 'setAutoBottomMargin' => 'stretch', 'autoMarginPadding' => 5, 'default_font' => 'arial']);
-//        print_r($html);return;
+        //var_dump($html);return;
         if ($footer == null) {
             foreach ($html as $page) {
+                //var_dump($html);return;
                 $mypdf->SetHTMLHeader($header);
                 $mypdf->AddPage('', // L - landscape, P - portrait
                     '', '', //inicio da contagem do numero de páginas
@@ -98,13 +107,12 @@ class PDF_c extends CI_Controller
                 $mypdf->WriteHTML($page);
             }
         } else {
+            //var_dump($html);return;
             foreach ($html as $page) {
                 $mypdf->SetHTMLHeader($header);
                 $mypdf->AddPage('P');
 //                $pdf->AddPage('P', '', "$this->contador_pag");
-                $mypdf->SetHTMLFooter($footer . '
-                <b>Página {PAGENO}</b>
-                ');
+                $mypdf->SetHTMLFooter('<b>Página {PAGENO}</b>');
                 $mypdf->WriteHTML($page);
 //                $this->contador_pag += $pdf->page;
             }
@@ -127,6 +135,12 @@ class PDF_c extends CI_Controller
         */
     }
 
+    public function index()
+    {
+        //$this->teste();
+        $this->gerar_pag_pdf();
+    }
+
     public function teste()
     {
         foreach ((array)$this->itens as $cont) {
@@ -136,12 +150,6 @@ class PDF_c extends CI_Controller
             $valores['dados'] = $dados[$cont];
             $this->load->view('teste', $valores);
         }
-    }
-
-    public function index()
-    {
-        $this->teste();
-        //$this->gerar_pag_pdf();
     }
 }
 
